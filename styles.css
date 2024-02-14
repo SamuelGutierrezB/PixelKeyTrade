@@ -64,4 +64,57 @@ nav a {
 
 .game-carousel {
   max-width: 1882px !important;
+  margin-top: 50px;
+}
+.game-table {
+  background-color: #555;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+  width: 80%;
+  max-width: 800px;
+}
+
+h2 {
+  color: #fff;
+}
+
+label {
+  color: #fff;
+  margin-top: 10px;
+  display: block;
+}
+
+select {
+  margin-top: 5px;
+  padding: 8px;
+}
+
+table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #777;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #555;
+  color: #fff;
+}
+
+tbody tr:hover {
+  background-color: #444;
+}
+
+.game-table-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

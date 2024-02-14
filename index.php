@@ -1,11 +1,44 @@
 <?php
 session_start();
 
-// Verifica si el usuario ha iniciado sesión
+include "utils/connect.php";
+$categoriaSeleccionada = 0; // Por defecto, no hay filtro de categoría
+$queryJuegos = ""; 
+
+if (isset($_POST['categoria'])) {
+    $categoriaSeleccionada = mysqli_real_escape_string($connection, $_POST['categoria']);
+    if ($categoriaSeleccionada != 0) {
+        $queryJuegos = "SELECT * FROM Productos 
+                        JOIN Producto_Categoria ON Productos.ID_Producto = Producto_Categoria.ID_Producto
+                        WHERE Producto_Categoria.ID_Categoria = $categoriaSeleccionada";
+    } else {
+        // Si la categoría seleccionada es 0 (Todas las categorías), mostramos todos los juegos
+        $queryJuegos = "SELECT * FROM Productos";
+    }
+}
+
 if (isset($_SESSION['user_id'])) {
-    // El usuario ha iniciado sesión
     $username = $_SESSION['username'];
     $isAdmin = $_SESSION['tipo_usuario'] === 'Admin';
+}
+
+$query = "SELECT Foto FROM Productos";
+$result = mysqli_query($connection, $query);
+
+$imagenUrls = array();
+$GameNames = array();
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $imagenUrls[] = "assets/" . $row['Foto'] . '.jpg';
+    $GameNames[] = $row['Foto'];
+}
+
+$queryCategorias = "SELECT * FROM Categorias";
+$resultCategorias = mysqli_query($connection, $queryCategorias);
+
+$categorias = array();
+while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
+    $categorias[] = $rowCategoria;
 }
 ?>
 
@@ -34,8 +67,6 @@ if (isset($_SESSION['user_id'])) {
         <h1>PixelKeyTrade</h1>
         <nav>
           <ul>
-            <li><a href="#">Inicio</a></li>
-            <li><a href="#">Juegos</a></li>
             <li><a href="#">Ofertas</a></li>
           </ul>
         </nav>
@@ -47,27 +78,68 @@ if (isset($_SESSION['user_id'])) {
         }  
           echo '<a style="margin-left: 15px; text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;" href="../PixelKeyTrade/utils/logout.php" id="logout">Cerrar Sesión</a>';
             
-            // Si el usuario es administrador, muestra los botones del inventario
-            
         } else {
             echo '<a href="../PixelKeyTrade/pages/login.php" id="login">Iniciar Sesión</a>';
             echo '<a href="../PixelKeyTrade/pages/register.php" id="register">Registrarse</a>';
         }
         ?>
-        <a href="#" id="cart"><img src="../PixelKeyTrade/assets/cart-icon.png" alt="" /></a>
+        <a href="pages/cart.php" id="cart"><img src="../PixelKeyTrade/assets/cart-icon.png" alt="" /></a>
     </div>
       </div>
     </header>
     <div class="game-carousel">
-      <div><img src="https://picsum.photos/200/300" alt="Juego 1" /></div>
-      <div><img src="https://picsum.photos/200/300" alt="Juego 2" /></div>
-      <div><img src="https://picsum.photos/200/300" alt="Juego 3" /></div>
-      <div><img src="https://picsum.photos/200/300" alt="Juego 3" /></div>
-      <div><img src="https://picsum.photos/200/300" alt="Juego 3" /></div>
-      <div><img src="https://picsum.photos/200/300" alt="Juego 3" /></div>
-      <div><img src="https://picsum.photos/200/300" alt="Juego 3" /></div>
-
+      <?php
+      foreach ($imagenUrls as $key => $imageUrl) {
+          echo '<a href="pages/game_detail.php?id=' . ($GameNames[$key]) . '"><div><img src="' . $imageUrl . '" alt="Juego" style="width: 100px;" /></div></a>';
+      }
+      ?>
+    </div>
+    <div class="game-table-container">
+        <div class="game-table">
+            <h2>Listado de Juegos</h2>
+            <form method="post" action="index.php">
+                <label for="categoria-filter">Filtrar por Categoría:</label>
+                <select name="categoria" id="categoria-filter">
+                    <option value="0">Todas las categorías</option>
+                    <?php
+                    foreach ($categorias as $categoria) {
+                        $selected = ($categoriaSeleccionada == $categoria['ID_Categoria']) ? 'selected' : '';
+                        echo '<option value="' . $categoria['ID_Categoria'] . '" ' . $selected . '>' . $categoria['Nombre'] . '</option>';
+                    }
+                    ?>
+                </select>
+                <input type="submit" value="Filtrar">
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Juego</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if (!empty($queryJuegos)) {
+                      $resultJuegos = mysqli_query($connection, $queryJuegos);
+                  
+                      while ($rowJuego = mysqli_fetch_assoc($resultJuegos)) {
+                        echo '<tr>';
+                        $index = array_search($rowJuego['Foto'], $GameNames); // Obtener el índice del juego en $GameNames
+                        echo '<td><a href="pages/game_detail.php?id=' . $rowJuego['ID_Producto'] . '"><div><img src="' . $imagenUrls[$index] . '" alt="Juego" style="width: 100px;" /></div></a></td>';
+                        echo '<td><a href="pages/game_detail.php?id=' . $rowJuego['ID_Producto'] . '">' . $rowJuego['Nombre'] . '</a></td>';
+                        echo '<td>' . $rowJuego['Descripcion'] . '</td>';
+                        echo '<td>' . $rowJuego['Precio'] . '</td>';
+                        echo '</tr>';
+                    }
+                  } else {
+                      echo "No se ha seleccionado una categoría.";
+                  }
+                    ?>
+                </tbody>
+          </table>
       </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script src="main.js"></script>

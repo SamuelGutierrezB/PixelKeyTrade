@@ -22,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Inicio de sesión exitoso
             $_SESSION['user_id'] = $row['ID_Usuario'];
             $_SESSION['username'] = $row['Nombre'];
+            $_SESSION['email'] = $row['CorreoElectronico'];
             $_SESSION['tipo_usuario'] = $row['TipoUsuario']; // Guarda el tipo de usuario en la sesión
             
             header("Location: ../index.php");

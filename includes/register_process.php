@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (mysqli_query($connection, $query)) {
         echo "Registro exitoso. Ahora puedes iniciar sesión.";
+        header("Location: ../index.php");
     } else {
         echo "Error en el registro: " . mysqli_error($connection);
     }
