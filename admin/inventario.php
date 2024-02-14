@@ -49,7 +49,24 @@ function agregarJuego($nombre, $descripcion, $precio, $stock, $idVendedor, $desa
 // Procesar formularios de agregar, editar y borrar juegos
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['agregar'])) {
-        // ... (código para agregar un juego)
+        // Procesar formulario de agregar
+        // Obtener datos del formulario
+        $nombre = $_POST['nombre'];
+        $descripcion = $_POST['descripcion'];
+        $precio = $_POST['precio'];
+        $stock = $_POST['stock'];
+        $desarrollador = $_POST['desarrollador'];
+        $foto = $_FILES['foto']; // Obtener el archivo de la foto
+        $idCategoria = $_POST['categoria']; // Obtener el ID de la categoría seleccionada
+
+        // Puedes validar los datos antes de agregar el juego
+        $resultado = agregarJuego($nombre, $descripcion, $precio, $stock, $_SESSION['user_id'], $desarrollador, $foto, $idCategoria);
+
+        if ($resultado) {
+            echo "Juego agregado con éxito.";
+        } else {
+            echo "Error al agregar el juego.";
+        }
     } elseif (isset($_POST['borrar'])) {
         // Procesar formulario de borrar
         $idProducto = $_POST['idProducto'];
