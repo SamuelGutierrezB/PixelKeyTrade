@@ -44,6 +44,7 @@ nav a {
 .user-icons {
   float: right;
   margin-left: -1000px;
+  margin-top: -25px;
 }
 
 #login,
