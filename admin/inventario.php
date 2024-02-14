@@ -99,7 +99,99 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "No se encontró la relación con la categoría.";
         }
+    } elseif (isset($_POST['editar'])) {
+        // Procesar formulario de editar
+        $idProducto = $_POST['idProducto'];
+    
+        // Obtener datos actuales del juego
+        $sqlObtenerJuego = "SELECT * FROM Productos WHERE ID_Producto = $idProducto";
+        $resultObtenerJuego = $connection->query($sqlObtenerJuego);
+    
+        if ($resultObtenerJuego->num_rows > 0) {
+            $datosJuego = $resultObtenerJuego->fetch_assoc();
+    
+            // Mostrar formulario para editar con los datos actuales del juego
+            echo "<form method='post' action='' style='margin: 20px 10px 0px 0px' enctype='multipart/form-data'>";
+            echo "<input type='hidden' name='idProducto' value='{$idProducto}'>";
+            echo "<label for='nombre'>Nombre:</label>";
+            echo "<input type='text' name='nombre_editar' value='{$datosJuego['Nombre']}' required>";
+    
+            echo "<label for='descripcion'>Descripción:</label>";
+            echo "<textarea name='descripcion_editar' required>{$datosJuego['Descripcion']}</textarea>";
+    
+            echo "<label for='precio'>Precio:</label>";
+            echo "<input type='number' name='precio_editar' value='{$datosJuego['Precio']}' required>";
+    
+            echo "<label for='stock'>Stock:</label>";
+            echo "<input type='number' name='stock_editar' value='{$datosJuego['Stock']}' required>";
+    
+            echo "<label for='desarrollador'>Desarrollador:</label>";
+            echo "<input type='text' name='desarrollador_editar' value='{$datosJuego['Desarrollador']}' required>";
+    
+            echo "<label for='foto'>Foto:</label>";
+            echo "<input type='file' name='foto_editar' accept='image/*'>";
+    
+            echo "<label for='categoria'>Categoría:</label>";
+            echo "<select name='categoria_editar' required>";
+            // Consulta para obtener todas las categorías existentes
+            $sqlCategorias = "SELECT * FROM Categorias";
+            $resultCategorias = $connection->query($sqlCategorias);
+    
+            // Mostrar categorías en el campo de selección
+            while ($rowCategoria = $resultCategorias->fetch_assoc()) {
+                $selected = ($rowCategoria['ID_Categoria'] == $datosJuego['ID_Categoria']) ? 'selected' : '';
+                echo "<option value='{$rowCategoria['ID_Categoria']}' $selected>{$rowCategoria['Nombre']}</option>";
+            }
+            echo "</select>";
+    
+            echo "<input type='submit' name='guardar_edicion' value='Guardar Edición'>";
+            echo "</form>";
+        } else {
+            echo "No se encontró el juego para editar.";
+        }
+    } elseif (isset($_POST['guardar_edicion'])) {
+        // Procesar formulario para guardar la edición
+        $idProducto = $_POST['idProducto'];
+        $nombre_editar = $_POST['nombre_editar'];
+        $descripcion_editar = $_POST['descripcion_editar'];
+        $precio_editar = $_POST['precio_editar'];
+        $stock_editar = $_POST['stock_editar'];
+        $desarrollador_editar = $_POST['desarrollador_editar'];
+        $foto_editar = $_FILES['foto_editar'];
+        $idCategoria_editar = $_POST['categoria_editar'];
+    
+        // Puedes validar los datos antes de editar el juego
+        global $connection;
+    
+        // Actualizar los campos directos en la tabla Productos
+        $sqlEditarJuego = "UPDATE Productos SET
+            Nombre = '$nombre_editar',
+            Descripcion = '$descripcion_editar',
+            Precio = $precio_editar,
+            Stock = $stock_editar,
+            Desarrollador = '$desarrollador_editar'
+            WHERE ID_Producto = $idProducto";
+    
+        if ($connection->query($sqlEditarJuego)) {
+            // Actualización exitosa en la tabla Productos, ahora actualizamos la relación en la tabla Producto_Categoria
+            $sqlActualizarCategoria = "UPDATE Producto_Categoria SET
+                ID_Categoria = $idCategoria_editar
+                WHERE ID_Producto = $idProducto";
+    
+            if ($connection->query($sqlActualizarCategoria)) {
+                // Actualización completa
+                echo "Juego editado con éxito.";
+            } else {
+                // Error al actualizar la categoría en la tabla Producto_Categoria
+                echo "Error al actualizar la categoría del juego.";
+            }
+        } else {
+            // Error al actualizar el juego en la tabla Productos
+            echo "Error al editar el juego.";
+        }
     }
+    
+    
 }
 ?>
 
