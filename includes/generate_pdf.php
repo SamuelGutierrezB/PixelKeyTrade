@@ -33,7 +33,6 @@ if (!$connection) {
 
 $stmt = mysqli_prepare($connection, $query);
 
-// Verifica que la preparación de la consulta sea exitosa
 if (!$stmt) {
     die("Error al preparar la consulta: " . mysqli_error($connection));
 }

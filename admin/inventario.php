@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verifica si el usuario es un administrador
 if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] !== 'Admin') {
     header("Location: ../index.php");
     exit();
@@ -9,28 +8,23 @@ if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] !== 'Admin') {
 
 include "../utils/connect.php";
 
-// Función para agregar un juego
 function agregarJuego($nombre, $descripcion, $precio, $stock, $idVendedor, $desarrollador, $foto, $idCategoria) {
     global $connection;
 
-    // Obtener el nombre de la foto
     $fotoNombre = $nombre;
 
-    // Ruta donde se guardará la foto
     $rutaFoto = "../assets/" . $fotoNombre . ".jpg";
 
-    // Mover la foto al directorio destino
     if (move_uploaded_file($foto["tmp_name"], $rutaFoto)) {
-        // La foto se movió correctamente, ahora puedes insertar el juego en la base de datos
+        
         $sql = "INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, ID_Vendedor, Desarrollador, Foto) 
                 VALUES ('$nombre', '$descripcion', $precio, $stock, $idVendedor, '$desarrollador', '$fotoNombre')";
         $result = $connection->query($sql);
 
         if ($result) {
-            // Obtener el ID del juego recién insertado
+            
             $idProducto = $connection->insert_id;
 
-            // Relacionar el juego con la categoría en la tabla Producto_Categoria
             $sqlRelacion = "INSERT INTO Producto_Categoria (ID_Producto, ID_Categoria) 
                             VALUES ($idProducto, $idCategoria)";
             $resultRelacion = $connection->query($sqlRelacion);
@@ -46,20 +40,17 @@ function agregarJuego($nombre, $descripcion, $precio, $stock, $idVendedor, $desa
     }
 }
 
-// Procesar formularios de agregar, editar y borrar juegos
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['agregar'])) {
-        // Procesar formulario de agregar
-        // Obtener datos del formulario
         $nombre = $_POST['nombre'];
         $descripcion = $_POST['descripcion'];
         $precio = $_POST['precio'];
         $stock = $_POST['stock'];
         $desarrollador = $_POST['desarrollador'];
-        $foto = $_FILES['foto']; // Obtener el archivo de la foto
-        $idCategoria = $_POST['categoria']; // Obtener el ID de la categoría seleccionada
+        $foto = $_FILES['foto'];
+        $idCategoria = $_POST['categoria']; 
 
-        // Puedes validar los datos antes de agregar el juego
         $resultado = agregarJuego($nombre, $descripcion, $precio, $stock, $_SESSION['user_id'], $desarrollador, $foto, $idCategoria);
 
         if ($resultado) {
@@ -68,10 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Error al agregar el juego.";
         }
     } elseif (isset($_POST['borrar'])) {
-        // Procesar formulario de borrar
         $idProducto = $_POST['idProducto'];
 
-        // Obtener la categoría asociada al producto
         $sqlObtenerCategoria = "SELECT ID_Categoria FROM Producto_Categoria WHERE ID_Producto = $idProducto";
         $resultObtenerCategoria = $connection->query($sqlObtenerCategoria);
 
@@ -79,12 +68,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $rowCategoria = $resultObtenerCategoria->fetch_assoc();
             $idCategoria = $rowCategoria['ID_Categoria'];
 
-            // Borrar la relación con la categoría en la tabla Producto_Categoria
             $sqlBorrarRelacion = "DELETE FROM Producto_Categoria WHERE ID_Producto = $idProducto";
             $resultBorrarRelacion = $connection->query($sqlBorrarRelacion);
 
             if ($resultBorrarRelacion) {
-                // Borrar el juego en la base de datos
                 $sqlBorrarJuego = "DELETE FROM Productos WHERE ID_Producto = $idProducto";
                 $resultBorrarJuego = $connection->query($sqlBorrarJuego);
 
@@ -100,17 +87,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "No se encontró la relación con la categoría.";
         }
     } elseif (isset($_POST['editar'])) {
-        // Procesar formulario de editar
         $idProducto = $_POST['idProducto'];
     
-        // Obtener datos actuales del juego
         $sqlObtenerJuego = "SELECT * FROM Productos WHERE ID_Producto = $idProducto";
         $resultObtenerJuego = $connection->query($sqlObtenerJuego);
     
         if ($resultObtenerJuego->num_rows > 0) {
             $datosJuego = $resultObtenerJuego->fetch_assoc();
     
-            // Mostrar formulario para editar con los datos actuales del juego
             echo "<form method='post' action='' style='margin: 20px 10px 0px 0px' enctype='multipart/form-data'>";
             echo "<input type='hidden' name='idProducto' value='{$idProducto}'>";
             echo "<label for='nombre'>Nombre:</label>";
@@ -133,11 +117,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
             echo "<label for='categoria'>Categoría:</label>";
             echo "<select name='categoria_editar' required>";
-            // Consulta para obtener todas las categorías existentes
+            
             $sqlCategorias = "SELECT * FROM Categorias";
             $resultCategorias = $connection->query($sqlCategorias);
-    
-            // Mostrar categorías en el campo de selección
+            
             while ($rowCategoria = $resultCategorias->fetch_assoc()) {
                 $selected = ($rowCategoria['ID_Categoria'] == $datosJuego['ID_Categoria']) ? 'selected' : '';
                 echo "<option value='{$rowCategoria['ID_Categoria']}' $selected>{$rowCategoria['Nombre']}</option>";
@@ -150,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "No se encontró el juego para editar.";
         }
     } elseif (isset($_POST['guardar_edicion'])) {
-        // Procesar formulario para guardar la edición
+        
         $idProducto = $_POST['idProducto'];
         $nombre_editar = $_POST['nombre_editar'];
         $descripcion_editar = $_POST['descripcion_editar'];
@@ -159,11 +142,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $desarrollador_editar = $_POST['desarrollador_editar'];
         $foto_editar = $_FILES['foto_editar'];
         $idCategoria_editar = $_POST['categoria_editar'];
-    
-        // Puedes validar los datos antes de editar el juego
+        
         global $connection;
-    
-        // Actualizar los campos directos en la tabla Productos
+        
         $sqlEditarJuego = "UPDATE Productos SET
             Nombre = '$nombre_editar',
             Descripcion = '$descripcion_editar',
@@ -173,21 +154,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             WHERE ID_Producto = $idProducto";
     
         if ($connection->query($sqlEditarJuego)) {
-            // Actualización exitosa en la tabla Productos, ahora actualizamos la relación en la tabla Producto_Categoria
+            
             $sqlActualizarCategoria = "UPDATE Producto_Categoria SET
                 ID_Categoria = $idCategoria_editar
                 WHERE ID_Producto = $idProducto";
     
             if ($connection->query($sqlActualizarCategoria)) {
-                // Actualización completa
                 echo "Juego editado con éxito.";
+
             } else {
-                // Error al actualizar la categoría en la tabla Producto_Categoria
                 echo "Error al actualizar la categoría del juego.";
+
             }
         } else {
-            // Error al actualizar el juego en la tabla Productos
             echo "Error al editar el juego.";
+
         }
     }
     
@@ -307,11 +288,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <label for="categoria">Categoría:</label>
     <select name="categoria" required>
         <?php
-        // Consulta para obtener todas las categorías existentes
         $sqlCategorias = "SELECT * FROM Categorias";
         $resultCategorias = $connection->query($sqlCategorias);
 
-        // Mostrar categorías en el campo de selección
         while ($rowCategoria = $resultCategorias->fetch_assoc()) {
             echo "<option value='{$rowCategoria['ID_Categoria']}'>{$rowCategoria['Nombre']}</option>";
         }
@@ -335,14 +314,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </thead>
             <tbody>
                 <?php
-                // Consulta para obtener todos los juegos existentes
                 $sql = "SELECT P.*, C.Nombre AS CategoriaNombre
         FROM Productos P
         LEFT JOIN Producto_Categoria PC ON P.ID_Producto = PC.ID_Producto
         LEFT JOIN Categorias C ON PC.ID_Categoria = C.ID_Categoria";
 $result = $connection->query($sql);
 
-                // Mostrar juegos en la tabla
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";
                     echo "<td>{$row['ID_Producto']}</td>";
@@ -351,7 +328,7 @@ $result = $connection->query($sql);
                     echo "<td>{$row['Precio']}</td>";
                     echo "<td>{$row['Stock']}</td>";
                     echo "<td>{$row['Desarrollador']}</td>";
-                    echo "<td>{$row['CategoriaNombre']}</td>"; // Agregado para mostrar la categoría
+                    echo "<td>{$row['CategoriaNombre']}</td>"; 
                     echo "<td>
                             <form method='post' action=''>
                                 <input type='hidden' name='idProducto' value='{$row['ID_Producto']}'>

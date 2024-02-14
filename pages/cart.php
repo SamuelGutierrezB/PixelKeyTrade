@@ -118,7 +118,7 @@ $totalCost = 0;
 </head>
 <body>
     <header>
-        <!-- Agrega el código del encabezado si es necesario -->
+        
         <h1>PixelKeyTrade</h1>
     </header>
     <div class="cart-container">
@@ -129,7 +129,7 @@ $totalCost = 0;
                     <th>Producto</th>
                     <th>Cantidad</th>
                     <th>Precio Unitario</th>
-                    <!-- <th>Subtotal</th> -->
+                    
                 </tr>
             </thead>
             <tbody>
@@ -139,7 +139,7 @@ $totalCost = 0;
         <td><?php echo $item['Cantidad']; ?></td>
         <td>$<?php echo number_format($item['PrecioUnitario'], 2); ?></td>
         <td>
-            <!-- Add a form for removing products -->
+           
             <form action="../includes/remove_from_cart.php" method="post">
                 <input type="hidden" name="product_id" value="<?php echo $item['ID_Producto']; ?>">
                 <button type="submit">Remove</button>
