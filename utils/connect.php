@@ -1,13 +1,13 @@
 <?php 
 //Valores para conexion
 
-$servidor = "localhost";
+$servidor = "127.0.0.1";
 $usuario = "root";
-$password = "MySQL56431";
-$db = "prueba";
+$password = "";
+$db = "pixelkeytrade";
 $connection = mysqli_connect($servidor, $usuario, $password,$db);
-if($conecta->connect_error){
-    die("Error de conexion".$conecta->connect_error);
+if($connection->connect_error){
+    die("Error de conexion".$connection->connect_error);
 }
 
 ?>
