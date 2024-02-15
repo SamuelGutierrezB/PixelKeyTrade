@@ -67,7 +67,7 @@ while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
         <h1>PixelKeyTrade</h1>
         <nav>
           <ul>
-            <li><a href="#">Ofertas</a></li>
+            <li><a href="pages/ofertas.php">Ofertas</a></li>
           </ul>
         </nav>
         <div class="user-icons">
@@ -88,14 +88,21 @@ while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
       </div>
     </header>
     <div class="game-carousel">
-      <?php
-      foreach ($imagenUrls as $key => $imageUrl) {
-          echo '<a href="pages/game_detail.php?id=' . ($GameNames[$key]) . '"><div><img src="' . $imageUrl . '" alt="Juego" style="width: 100px;" /></div></a>';
-      }
-      ?>
+        <?php
+        foreach ($imagenUrls as $key => $imageUrl) {
+            echo '<a href="pages/game_detail.php?id=' . ($GameNames[$key]) . '">';
+            echo '<div style="position: relative; width: 200px; height: 200px; text-align: center;">';
+            echo '<img src="assets/pixelPhoto.png" alt="Pixel Photo" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;" />';
+            echo '<img src="' . $imageUrl . '" alt="Juego" style="width: auto; height: 60%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />';
+            echo '</div>';
+            echo '</a>';
+        }
+        ?>
     </div>
+
     <div class="game-table-container">
         <div class="game-table">
+          <div class="game-table-header">
             <h2>Listado de Juegos</h2>
             <form method="post" action="index.php">
                 <label for="categoria-filter">Filtrar por Categoría:</label>
@@ -110,14 +117,16 @@ while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
                 </select>
                 <input type="submit" value="Filtrar">
             </form>
+            </div>
             <table>
-                <thead>
+                <!-- <thead>
                     <tr>
+                        <th> </th>
                         <th>Juego</th>
                         <th>Descripción</th>
                         <th>Precio</th>
                     </tr>
-                </thead>
+                </thead> -->
                 <tbody>
                     <?php
                     if (!empty($queryJuegos)) {
@@ -125,12 +134,12 @@ while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
                   
                       while ($rowJuego = mysqli_fetch_assoc($resultJuegos)) {
                         echo '<tr>';
-                        $index = array_search($rowJuego['Foto'], $GameNames); // Obtener el índice del juego en $GameNames
-                        echo '<td><a href="pages/game_detail.php?id=' . $rowJuego['ID_Producto'] . '"><div><img src="' . $imagenUrls[$index] . '" alt="Juego" style="width: 100px;" /></div></a></td>';
-                        echo '<td><a href="pages/game_detail.php?id=' . $rowJuego['ID_Producto'] . '">' . $rowJuego['Nombre'] . '</a></td>';
-                        echo '<td>' . $rowJuego['Descripcion'] . '</td>';
-                        echo '<td>' . $rowJuego['Precio'] . '</td>';
-                        echo '</tr>';
+                        $index = array_search($rowJuego['Foto'], $GameNames);
+                        echo '<td><a style="margin-left: 15px; text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;" href="pages/game_detail.php?id=' . $rowJuego['Nombre'] . '"><div><img src="' . $imagenUrls[$index] . '" alt="Juego" style="width: 100px;" /></div></a></td>';
+                        echo '<td><a style="margin-left: 15px; text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;" href="pages/game_detail.php?id=' . $rowJuego['Nombre'] . '">' . $rowJuego['Nombre'] . '</a></td>';
+                        echo '<td style="margin-left: 15px; text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;">' . $rowJuego['Descripcion'] . '</td>';
+                        echo '<td style="margin-left: 15px; text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;">$' . $rowJuego['Precio'] . '</td>';
+                        echo '</tr style="margin-left: 15px; text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;">';
                     }
                   } else {
                       echo "No se ha seleccionado una categoría.";

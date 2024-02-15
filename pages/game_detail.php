@@ -4,6 +4,8 @@ session_start();
 include "../utils/connect.php";
 
 $gameId = $_GET['id'];
+$isOferta = isset($_GET['oferta']) && $_GET['oferta'] === 'true';
+$precioConDescuento = $isOferta && isset($_GET['precio_descuento']) ? $_GET['precio_descuento'] : null;
 
 $query = "SELECT p.*, c.Nombre AS CategoriaNombre
           FROM productos p
@@ -12,11 +14,6 @@ $query = "SELECT p.*, c.Nombre AS CategoriaNombre
           WHERE p.Foto = '$gameId'";
 
 $result = mysqli_query($connection, $query);
-
-if (!$result || mysqli_num_rows($result) === 0) {
-    header("Location: ../index.php");
-    exit();
-}
 
 $gameDetails = mysqli_fetch_assoc($result);
 
@@ -96,10 +93,11 @@ mysqli_close($connection);
         <h2><?php echo $gameDetails['Nombre']; ?></h2>
         <p><?php echo $gameDetails['Descripcion']; ?></p>
         <p>Categoría: <?php echo $gameDetails['CategoriaNombre']; ?></p>
-        <p>Precio: $<?php echo $gameDetails['Precio']; ?></p>
-        
+        <p>Precio: $<?php echo $precioConDescuento ? number_format($precioConDescuento, 2) : $gameDetails['Precio']; ?></p>
+
         <form action="../includes/agregar_al_carrito.php" method="post">
             <input type="hidden" name="id_producto" value="<?php echo $gameDetails['ID_Producto']; ?>">
+            <input type="hidden" name="precio" value="<?php echo $precioConDescuento ? $precioConDescuento : $gameDetails['Precio']; ?>">
             <button type="submit">Agregar al carrito</button>
         </form>
         <a href="../index.php">Volver a la lista de juegos</a>

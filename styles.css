@@ -2,7 +2,11 @@ body {
   font-family: "Arial", sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #1a1a1a; /* Fondo oscuro */
+  background-color: #1a1a1a;
+  background-image: url("assets/pixelBackGround.jpg");
+  /* background-size: cover; */
+  background-repeat: repeat;
+  /* background-attachment: fixed; */
 }
 
 .top-menu-container {
@@ -63,7 +67,8 @@ nav a {
 }
 
 .game-carousel {
-  max-width: 1882px !important;
+  max-width: 1870px !important;
+  height: 260px;
   margin-top: 50px;
 }
 .game-table {
@@ -73,7 +78,7 @@ nav a {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   margin-top: 20px;
   width: 80%;
-  max-width: 800px;
+  max-width: 1424px;
 }
 
 h2 {
@@ -117,4 +122,10 @@ tbody tr:hover {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.game-table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
 }

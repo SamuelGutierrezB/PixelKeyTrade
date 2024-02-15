@@ -10,11 +10,20 @@ if (!isset($_SESSION['user_id'])) {
 
 $userID = $_SESSION['user_id'];
 
-$query = "SELECT CarritoCompras.ID_Carrito, CarritoCompras.FechaCreacion, DetalleCarrito.ID_Producto, Productos.Nombre AS ProductoNombre, DetalleCarrito.Cantidad, DetalleCarrito.PrecioUnitario
-FROM CarritoCompras
-INNER JOIN DetalleCarrito ON CarritoCompras.ID_Carrito = DetalleCarrito.ID_Carrito
-INNER JOIN Productos ON DetalleCarrito.ID_Producto = Productos.ID_Producto
-WHERE CarritoCompras.ID_Usuario = $userID AND CarritoCompras.Estado = 'Activo'";
+$query = "
+    SELECT 
+        CarritoCompras.ID_Carrito, 
+        CarritoCompras.FechaCreacion, 
+        DetalleCarrito.ID_Producto, 
+        Productos.Nombre AS ProductoNombre, 
+        DetalleCarrito.Cantidad, 
+        DetalleCarrito.PrecioUnitario,
+        Descuentos.PorcentajeDescuento
+    FROM CarritoCompras
+    INNER JOIN DetalleCarrito ON CarritoCompras.ID_Carrito = DetalleCarrito.ID_Carrito
+    INNER JOIN Productos ON DetalleCarrito.ID_Producto = Productos.ID_Producto
+    LEFT JOIN Descuentos ON Productos.ID_Producto = Descuentos.ID_Producto
+    WHERE CarritoCompras.ID_Usuario = $userID AND CarritoCompras.Estado = 'Activo'";
 
 $result = mysqli_query($connection, $query);
 
@@ -133,21 +142,22 @@ $totalCost = 0;
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($cartDetails as $item): ?>
-    <tr>
-        <td><?php echo $item['ProductoNombre']; ?></td>
-        <td><?php echo $item['Cantidad']; ?></td>
-        <td>$<?php echo number_format($item['PrecioUnitario'], 2); ?></td>
-        <td>
-           
-            <form action="../includes/remove_from_cart.php" method="post">
-                <input type="hidden" name="product_id" value="<?php echo $item['ID_Producto']; ?>">
-                <button type="submit">Remove</button>
-            </form>
-        </td>
-    </tr>
-    <?php $totalCost += $item['Cantidad'] * $item['PrecioUnitario']; ?>
-<?php endforeach; ?>
+                <?php foreach ($cartDetails as $item): 
+                    $discountedPrice = $item['PrecioUnitario'] * (1 - $item['PorcentajeDescuento'] / 100);
+                    ?>
+                    <tr>
+                        <td><?php echo $item['ProductoNombre']; ?></td>
+                        <td><?php echo $item['Cantidad']; ?></td>
+                        <td>$<?php echo number_format($discountedPrice, 2); ?></td>
+                        <td>
+                            <form action="../includes/remove_from_cart.php" method="post">
+                                <input type="hidden" name="product_id" value="<?php echo $item['ID_Producto']; ?>">
+                                <button type="submit">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php $totalCost += $item['Cantidad'] * $discountedPrice; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
         <p>Total: $<?php echo number_format($totalCost, 2); ?></p>
