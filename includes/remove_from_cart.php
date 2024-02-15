@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             
-            header("Location: cart.php");
+            header("Location: ../pages/cart.php");
             exit();
         } else {
             die("Error al obtener detalles del carrito: " . mysqli_error($connection));
@@ -35,6 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
-header("Location: cart.php");
+header("Location: ../pages/cart.php");
 exit();
 ?>

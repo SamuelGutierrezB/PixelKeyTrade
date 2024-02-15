@@ -52,13 +52,13 @@ $totalCost = 0;
 
 $pdf = new TCPDF();
 $pdf->AddPage();
+$pdf->SetFont('helvetica', '', 12); // Set font and size for the entire document
 $pdf->Cell(0, 10, 'Factura de Compra', 0, 1, 'C');
 
 foreach ($cartDetails as $item) {
     $pdf->Cell(0, 10, 'Producto: ' . $item['ProductoNombre'], 0, 1);
     $pdf->Cell(0, 10, 'Cantidad: ' . $item['Cantidad'], 0, 1);
     $pdf->Cell(0, 10, 'Precio Unitario: $' . number_format($item['PrecioUnitario'], 2), 0, 1);
-    // $pdf->Cell(0, 10, 'Subtotal: $' . number_format($item['Cantidad'] * $item['PrecioUnitario'], 2), 0, 1);
     $totalCost += $item['Cantidad'] * $item['PrecioUnitario'];
 }
 
@@ -66,24 +66,7 @@ $pdf->Cell(0, 10, 'Total: $' . number_format($totalCost, 2), 0, 1);
 
 $pdfFileName = __DIR__ . '/factura_' . time() . '.pdf';
 $pdf->Output($pdfFileName, 'F');
-
-$subject = 'Factura de Compra - PixelKeyTrade';
-$message = 'Gracias por tu compra. Adjunto encontrarás la factura de tu compra.';
-$headers = 'From: webmaster@pixelkeytrade.com' . "\r\n" .
-    'Reply-To: webmaster@pixelkeytrade.com' . "\r\n" .
-    'X-Mailer: PHP/' . phpversion();
-
-    $pdfFileName = __DIR__ . '/factura_' . time() . '.pdf';
-    $pdf->Output($pdfFileName, 'F');
-    
-    $subject = 'Factura de Compra - PixelKeyTrade';
-    $message = 'Gracias por tu compra. Adjunto encontrarás la factura de tu compra.';
-    $headers = 'From: webmaster@pixelkeytrade.com' . "\r\n" .
-        'Reply-To: webmaster@pixelkeytrade.com' . "\r\n" .
-        'X-Mailer: PHP/' . phpversion();
-    
-    $pdf->Output('factura.pdf', 'I');
-    
+header("Location: ../index.php");
 
 mysqli_stmt_close($stmt);
 ?>

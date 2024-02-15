@@ -66,15 +66,15 @@ while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
       <div class="top-menu-container">
         <h1>PixelKeyTrade</h1>
         <nav>
-          <ul>
-            <li><a href="pages/ofertas.php">Ofertas</a></li>
+          <ul style="margin-top: 30px;">
+            <li><a href="pages/ofertas.php">✨Ofertas✨</a></li>
           </ul>
         </nav>
         <div class="user-icons">
         <?php
         if (isset($_SESSION['user_id'])) {
           if ($isAdmin) {
-            echo '<a style="text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;"  href="../PixelKeyTrade/admin/inventario.php" id="inventory">Inventario</a>';
+            echo '<a style="text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;"  href="../PixelKeyTrade/admin/inventario.php" id="inventory">Inventario </a>';
         }  
           echo '<a style="margin-left: 15px; text-decoration: none;color: #fff;font-weight: bold;font-size: 1.2em;" href="../PixelKeyTrade/utils/logout.php" id="logout">Cerrar Sesión</a>';
             
@@ -83,7 +83,7 @@ while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
             echo '<a href="../PixelKeyTrade/pages/register.php" id="register">Registrarse</a>';
         }
         ?>
-        <a href="pages/cart.php" id="cart"><img src="../PixelKeyTrade/assets/cart-icon.png" alt="" /></a>
+        <a href="pages/cart.php" id="cart">Carrito<img src="../PixelKeyTrade/assets/cart-icon.png" alt="" /></a>
     </div>
       </div>
     </header>
@@ -91,7 +91,7 @@ while ($rowCategoria = mysqli_fetch_assoc($resultCategorias)) {
         <?php
         foreach ($imagenUrls as $key => $imageUrl) {
             echo '<a href="pages/game_detail.php?id=' . ($GameNames[$key]) . '">';
-            echo '<div style="position: relative; width: 200px; height: 200px; text-align: center;">';
+            echo '<div style="position: relative; width: 300px; height: 300px; text-align: center;">';
             echo '<img src="assets/pixelPhoto.png" alt="Pixel Photo" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;" />';
             echo '<img src="' . $imageUrl . '" alt="Juego" style="width: auto; height: 60%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />';
             echo '</div>';

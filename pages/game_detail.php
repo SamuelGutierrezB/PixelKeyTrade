@@ -26,6 +26,13 @@ mysqli_close($connection);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
+        .top-menu-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
         body {
             background-color: #333;
             color: #ccc;
@@ -70,10 +77,10 @@ mysqli_close($connection);
         }
 
         a {
-            color: #fff;
             text-decoration: none;
-            margin-top: 20px;
-            display: block;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.2em;
         }
 
         a:hover {
@@ -85,7 +92,10 @@ mysqli_close($connection);
 </head>
 <body>
     <header>
-        <h1>PixelKeyTrade</h1>
+    <div class="top-menu-container">
+            <h1>PixelKeyTrade</h1>
+            <a href="../index.php">Volver a la página principal</a>
+        </div>
     </header>
     
     <div class="game-details">
@@ -100,7 +110,6 @@ mysqli_close($connection);
             <input type="hidden" name="precio" value="<?php echo $precioConDescuento ? $precioConDescuento : $gameDetails['Precio']; ?>">
             <button type="submit">Agregar al carrito</button>
         </form>
-        <a href="../index.php">Volver a la lista de juegos</a>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     

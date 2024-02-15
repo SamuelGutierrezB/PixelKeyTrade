@@ -121,6 +121,19 @@ $totalCost = 0;
         button:hover {
             background-color: #999;
         }
+        a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.2em;
+            }
+            .top-menu-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
     </style>
     <link rel="stylesheet" href="styles.css" />
     <title>Carrito de Compras - PixelKeyTrade</title>
@@ -128,7 +141,10 @@ $totalCost = 0;
 <body>
     <header>
         
-        <h1>PixelKeyTrade</h1>
+    <div class="top-menu-container">
+            <h1>PixelKeyTrade</h1>
+            <a href="../index.php">Volver a la página principal</a>
+        </div>
     </header>
     <div class="cart-container">
         <h2>Carrito de Compras</h2>
